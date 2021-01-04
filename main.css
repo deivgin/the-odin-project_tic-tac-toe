@@ -1,0 +1,14 @@
+*{
+    margin: 0;
+    padding: 0;
+}
+
+body{
+    box-sizing: border-box;
+    font-size: 62.5%;
+}
+
+
+.app{
+    font-size: 2rem;
+}
