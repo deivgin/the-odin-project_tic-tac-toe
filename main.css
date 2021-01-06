@@ -19,11 +19,14 @@ body {
 
 .app {
   text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .header {
   font-size: 10rem;
-  margin-top: 5rem;
+  margin-top: 2rem;
   color: var(--primary);
   -webkit-text-stroke: 0.005rem black;
 }
@@ -52,15 +55,15 @@ body {
 }
 /*  */
 
-.board {
-  width: 21rem;
-  height: 21rem;
+.gameboard {
+  width: 30rem;
+  height: 30rem;
   background-color: orangered;
   display: flex;
   flex-wrap: wrap;
 }
 
-.board__box {
+.gameboard__box {
   height: 6rem;
   width: 6rem;
   border: 0.2rem solid black;
