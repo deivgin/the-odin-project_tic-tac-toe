@@ -12,15 +12,16 @@ const components = (()=>{
         startBtn.innerHTML = "Start Game";
         return startBtn;
     }
-    function createGameBoard(){
+    function createGameBoardContaiener(){
         const gameContainer = document.createElement("div");
         gameContainer.className = "gameboard"
         return gameContainer
     }
-    function createGameBox(index){
+    function createGameBox(id, stateOfBox){
         const gameBox = document.createElement("div");
         gameBox.className = "gameboard__box";
-        gameBox.id = `box-${index}`;
+        gameBox.id = `box-${id}`;
+        gameBox.innerHTML = stateOfBox;
         return gameBox;
     }
     function testBtn(){
@@ -28,76 +29,56 @@ const components = (()=>{
         testBtn.innerHTML = "Test";
         return testBtn;
     }
-    return {createHeader, createStartBtn, createGameBoard, createGameBox, testBtn};
+    return {createHeader, createStartBtn, createGameBoardContaiener, createGameBox, testBtn};
 })();
 
-//this bad boy should create the gameboard and controll its things
-//perhaps only here things about it should change
 const gameboard = (()=>{
-    gameContainer = components.createGameBoard();
     const gameboard = [];
+    const board = components.createGameBoardContaiener();
 
-    function init(){
-
+    const init = () => {
         for(let i=0; i<9; i++){
             const box = {
-                state: '',
-                dom: (click) =>{
-                    let box = components.createGameBox(i)
-                    box.addEventListener("click", click);
-                    return box
-                },
-                changeState: (state) => console.log("State changed")
+                id: i,
+                state: ''
             }
-            gameboard.push(box)
+            gameboard.push(box);
         }
-
-        gameboard.map((box)=>{
-            gameContainer.appendChild(box.dom())
-        })
-        return gameContainer
     }
 
-    function getGameboard(){return gameboard}
+    const render = () => {
+        board.innerHTML = '';
+        gameboard.map(box => {
+            const boxhtml = components.createGameBox(box.id, box.state);
+            console.log(boxhtml);
+            board.appendChild(boxhtml)
+        });
+        return board
+    }
 
-    return { init, getGameboard }
+    const changeState = (index, state) => {
+        gameboard[index].state = state;
+        render();
+    }
+
+    return { init, render, changeState }
 })();
 
-//this here controls the flow of the game, so i suppose
-//it should only do that
-//like start game, say who won, etc.
+//sukuria gameboard html
 const appController = (() => {
     const app = document.getElementById("app");
-    const header = components.createHeader();
-    const startGameBtn = components.createStartBtn();
-    const board = gameboard.init();
-    const gameboardArray = gameboard.getGameboard();
-
     const testBtn = components.testBtn();
+    app.appendChild(testBtn)
 
-    let gameStarted = false;
-
-    //bind events
-    startGameBtn.addEventListener("click", startGame)
-    testBtn.addEventListener("click", test);
-
-    function init(){
-        app.appendChild(testBtn)
-        app.appendChild(header);
-        // app.appendChild(startGameBtn);
-        app.appendChild(board);
-    };
-
-    function startGame(){
-        startGameBtn.remove();
-        app.appendChild(board);
+    const init = () => {
+        gameboard.init();
+        const board = gameboard.render();
+        app.appendChild(board)
     }
 
-    //delet later, for testing pupaces
-    function test(){
-        //kazkaip reikia pasiekti chang estate funkcija
-        console.log(gameboardArray);
-    }
-
+    testBtn.addEventListener("click", () => {
+        gameboard.changeState(0, "LOL")
+    })
+    
     init();
 })();
