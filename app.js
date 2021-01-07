@@ -20,7 +20,7 @@ const components = (()=>{
     function createGameBox(id, stateOfBox){
         const gameBox = document.createElement("div");
         gameBox.className = "gameboard__box";
-        gameBox.id = `box-${id}`;
+        gameBox.id = id;
         gameBox.innerHTML = stateOfBox;
         return gameBox;
     }
@@ -39,7 +39,7 @@ const gameboard = (()=>{
     const init = () => {
         for(let i=0; i<9; i++){
             const box = {
-                id: i,
+                id: `box-${i}`,
                 state: ''
             }
             gameboard.push(box);
@@ -50,7 +50,6 @@ const gameboard = (()=>{
         board.innerHTML = '';
         gameboard.map(box => {
             const boxhtml = components.createGameBox(box.id, box.state);
-            console.log(boxhtml);
             board.appendChild(boxhtml)
         });
         return board
@@ -59,26 +58,39 @@ const gameboard = (()=>{
     const changeState = (index, state) => {
         gameboard[index].state = state;
         render();
-    }
+        console.log(gameboard[index]);
+        }
 
-    return { init, render, changeState }
+    const getBoard = () => board
+
+    return { init, render, changeState, getBoard }
 })();
 
 //sukuria gameboard html
 const appController = (() => {
     const app = document.getElementById("app");
+    const board = gameboard.getBoard();
     const testBtn = components.testBtn();
     app.appendChild(testBtn)
 
-    const init = () => {
+    const startGame = () => {
         gameboard.init();
-        const board = gameboard.render();
-        app.appendChild(board)
+        gameboard.render();
+        board.childNodes.forEach((node) => {
+            node.addEventListener("click", pressHelper)
+        });
+        app.appendChild(board);
     }
 
     testBtn.addEventListener("click", () => {
-        gameboard.changeState(0, "LOL")
+        
     })
+
+    const pressHelper = (event) => {
+        const index = event.target.id.slice(4,5);
+        const state = "X";
+        gameboard.changeState(index, state);
+    }
     
-    init();
+    startGame();
 })();
