@@ -33,12 +33,12 @@ const GameBoard = (() => {
     const foundBox = gameBoard.find(
       (item) => item.id === parseInt(e.target.id)
     );
-    updateBox(foundBox);
+    updateBox(foundBox, currentPlayer);
   }
 
-  function updateBox(box) {
+  function updateBox(box, player) {
     if (box.mark === "") {
-      box.mark = "X";
+      box.mark = player.mark;
     } else {
       console.log("spotTaken");
     }
@@ -48,14 +48,15 @@ const GameBoard = (() => {
   return { createBoard, updateBox };
 })();
 
-const Player = (name, mark) => {
-  name, mark;
-};
+const Player = (name, mark) => ({
+  name,
+  mark,
+});
 
 const player1 = Player("player1", "X");
 const player2 = Player("player2", "O");
 
-const GameFlow = (() => {
+const GameController = (() => {
   const init = () => {
     const heading = document.createElement("h1");
     heading.classList.add("heading");
@@ -71,8 +72,10 @@ const GameFlow = (() => {
   };
 
   function gameStart() {
-    const currPlayerHTML = document.createElement();
     currentPlayer = player1;
+    const currPlayerHTML = document.createElement("h1");
+    currPlayerHTML.innerHTML = currentPlayer.name;
+    app.appendChild(currPlayerHTML);
   }
   gameStart();
 })();
