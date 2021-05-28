@@ -1,51 +1,26 @@
-const global = (() => {
-  const app = document.getElementById("app");
-  let currentPlayer = null;
-  return { app, currentPlayer };
-})();
-
 const GameBoard = (() => {
   const gameBoard = [];
-  const container = document.createElement("div");
-  container.classList.add("game-board");
 
-  function createBoard() {
+  function init() {
     for (let i = 0; i <= 8; i++) {
-      gameBoard.push({ id: i, mark: "" });
+      gameBoard.push("");
     }
-    app.appendChild(container);
-    renderBox();
   }
 
-  function renderBox() {
-    container.innerHTML = "";
-    gameBoard.map((item) => {
-      const box = document.createElement("div");
-      box.setAttribute("id", item.id);
-      box.classList.add("box");
-      box.innerHTML = item.mark;
-      box.addEventListener("click", handleBoxClick);
-      container.appendChild(box);
-    });
+  function clear() {
+    gameBoard.splice(0, gameBoard.length);
   }
 
-  function handleBoxClick(e) {
-    const foundBox = gameBoard.find(
-      (item) => item.id === parseInt(e.target.id)
-    );
-    updateBox(foundBox, currentPlayer);
+  function getBoard() {
+    return gameBoard;
   }
 
-  function updateBox(box, player) {
-    if (box.mark === "") {
-      box.mark = player.mark;
-    } else {
-      console.log("spotTaken");
-    }
-    renderBox();
+  function updateBoard(index, mark) {
+    if (gameBoard[index] === "") gameBoard[index] = mark;
+    else alert("NONOON");
   }
-  createBoard();
-  return { createBoard, updateBox };
+
+  return { init, clear, getBoard, updateBoard };
 })();
 
 const Player = (name, mark) => ({
@@ -57,25 +32,33 @@ const player1 = Player("player1", "X");
 const player2 = Player("player2", "O");
 
 const GameController = (() => {
-  const init = () => {
-    const heading = document.createElement("h1");
-    heading.classList.add("heading");
-    heading.innerHTML = "Tic-Tac-Toe";
+  const app = document.getElementById("app");
+  const board = GameBoard.getBoard();
+  const container = document.createElement("div");
+  container.classList.add("game-board");
 
-    const button = document.createElement("button");
-    button.innerHTML = "Start game";
-    button.setAttribute("id", "startButton");
-    button.addEventListener("click", gameStart);
-
-    app.appendChild(heading);
-    app.appendChild(button);
-  };
-
-  function gameStart() {
-    currentPlayer = player1;
-    const currPlayerHTML = document.createElement("h1");
-    currPlayerHTML.innerHTML = currentPlayer.name;
-    app.appendChild(currPlayerHTML);
+  function startGame() {
+    GameBoard.init();
+    app.appendChild(container);
+    renderBoard(board);
   }
-  gameStart();
+
+  function renderBoard(board) {
+    container.innerHTML = "";
+    board.map((item, index) => {
+      const box = document.createElement("div");
+      box.classList.add("box");
+      box.id = index;
+      box.innerHTML = item;
+      box.addEventListener("click", handleBoxClick);
+      container.appendChild(box);
+    });
+  }
+
+  function handleBoxClick(e) {
+    GameBoard.updateBoard(e.target.id, "X");
+    renderBoard(board);
+  }
+
+  startGame();
 })();
