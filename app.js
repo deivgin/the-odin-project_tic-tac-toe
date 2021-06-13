@@ -33,8 +33,45 @@ const gameController = (() => {
     turn++;
   };
 
+  const checkWinCondition = (player) => {
+    const horizontal = [0, 3, 6].map((i) => [i, i + 1, i + 2]);
+    const vertical = [0, 1, 2].map((i) => [i, i + 3, i + 6]);
+    const diagonal = [
+      [0, 4, 8],
+      [2, 4, 6],
+    ];
+    const winCondition = []
+      .concat(horizontal)
+      .concat(vertical)
+      .concat(diagonal);
+
+    const res = winCondition.some(
+      (indices) =>
+        board[indices[0]] == player.mark &&
+        board[indices[1]] == player.mark &&
+        board[indices[2]] == player.mark
+    );
+    return res;
+  };
+
+  const checkDrawCondition = () => {
+    const res = board.every((item) => item !== "");
+    return res;
+  };
+
   const onBoxClick = (index) => {
     gameBoard.updateBoard(index, currPlayer.mark);
+    const isGameWon = checkWinCondition(currPlayer);
+    const isGameDraw = checkDrawCondition();
+    console.log("gameWon?", isGameWon);
+    console.log("gameDraw?", isGameDraw);
+    if (isGameWon) {
+      alert("gameWon");
+      return;
+    } else if (isGameDraw) {
+      alert("gameDraw");
+      return;
+    }
     if (currPlayer === player1) currPlayer = player2;
     else if (currPlayer === player2) currPlayer = player1;
     console.log("currPlayer", currPlayer);
@@ -42,18 +79,6 @@ const gameController = (() => {
     console.log("turn", turn);
   };
 
-  const winConditions = [
-    [0, 1, 2],
-    [3, 4, 5],
-    [6, 7, 8],
-    [0, 3, 6],
-    [1, 4, 7],
-    [2, 5, 8],
-    [0, 4, 8],
-    [2, 4, 6],
-  ];
-
-  const checkWinCondition = () => {};
   return { gameStart, getIsGameStarted, onBoxClick };
 })();
 
