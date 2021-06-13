@@ -1,64 +1,127 @@
-const GameBoard = (() => {
+const gameBoard = (() => {
   const gameBoard = [];
 
-  function init() {
-    for (let i = 0; i <= 8; i++) {
-      gameBoard.push("");
-    }
-  }
+  const init = () => {
+    for (let i = 0; i <= 8; i++) gameBoard.push("");
+  };
 
-  function clear() {
-    gameBoard.splice(0, gameBoard.length);
-  }
+  const clear = () => gameBoard.splice(0, gameBoard.length);
 
-  function getBoard() {
-    return gameBoard;
-  }
+  const getBoard = () => gameBoard;
 
-  function updateBoard(index, mark) {
-    if (gameBoard[index] === "") gameBoard[index] = mark;
-    else alert("NONOON");
-  }
+  const updateBoard = (index, mark) =>
+    gameBoard[index] === "" && (gameBoard[index] = mark);
 
   return { init, clear, getBoard, updateBoard };
 })();
 
-const Player = (name, mark) => ({
-  name,
-  mark,
-});
+const Player = (name, mark) => ({ name, mark });
 
-const player1 = Player("player1", "X");
-const player2 = Player("player2", "O");
+const gameController = (() => {
+  let isGameStarted = false;
+  const board = gameBoard.getBoard();
+  const player1 = Player("player1", "X");
+  const player2 = Player("player2", "O");
+  let currPlayer = player1;
+  let turn = 0;
 
-const GameController = (() => {
+  const getIsGameStarted = () => isGameStarted;
+
+  const gameStart = () => {
+    gameBoard.init();
+    isGameStarted = true;
+    turn++;
+  };
+
+  const onBoxClick = (index) => {
+    gameBoard.updateBoard(index, currPlayer.mark);
+    if (currPlayer === player1) currPlayer = player2;
+    else if (currPlayer === player2) currPlayer = player1;
+    console.log("currPlayer", currPlayer);
+    turn++;
+    console.log("turn", turn);
+  };
+
+  const winConditions = [
+    [0, 1, 2],
+    [3, 4, 5],
+    [6, 7, 8],
+    [0, 3, 6],
+    [1, 4, 7],
+    [2, 5, 8],
+    [0, 4, 8],
+    [2, 4, 6],
+  ];
+
+  const checkWinCondition = () => {};
+  return { gameStart, getIsGameStarted, onBoxClick };
+})();
+
+const displayController = (() => {
   const app = document.getElementById("app");
-  const board = GameBoard.getBoard();
-  const container = document.createElement("div");
-  container.classList.add("game-board");
+  const board = gameBoard.getBoard();
 
-  function startGame() {
-    GameBoard.init();
-    app.appendChild(container);
-    renderBoard(board);
-  }
+  const handleStartGame = () => {
+    gameController.gameStart();
+    renderGameScreen();
+  };
 
-  function renderBoard(board) {
-    container.innerHTML = "";
+  const handleBoxClick = (e) => {
+    if (e.target.innerText === "") {
+      gameController.onBoxClick(e.target.id);
+      renderGameScreen();
+    } else console.error("box is used");
+  };
+
+  const createHeader = (name) => {
+    const header = document.createElement("h1");
+    header.classList.add("header");
+    name && (header.innerText = name);
+    return header;
+  };
+  const createButton = (name, handleClick) => {
+    const button = document.createElement("button");
+    button.innerText = name;
+    button.classList.add("button");
+    handleClick && button.addEventListener("click", handleClick);
+    return button;
+  };
+  const createInput = (placeholder) => {
+    const input = document.createElement("input");
+    input.classList.add(input);
+    placeholder && (input.placeholder = placeholder);
+    return input;
+  };
+
+  const createContainer = (className) => {
+    const container = document.createElement("div");
+    container.classList.add(className);
+    return container;
+  };
+
+  const renderGameBoard = (board) => {
+    const container = createContainer("game-board");
     board.map((item, index) => {
       const box = document.createElement("div");
-      box.classList.add("box");
       box.id = index;
-      box.innerHTML = item;
+      box.classList.add("box");
+      box.innerText = item;
       box.addEventListener("click", handleBoxClick);
       container.appendChild(box);
     });
-  }
+    return container;
+  };
 
-  function handleBoxClick(e) {
-    GameBoard.updateBoard(e.target.id, "X");
-    renderBoard(board);
-  }
+  const homeScreen = () => {
+    app.innerHTML = "";
+    app.appendChild(createHeader("Tic-Tac-Toe"));
+    app.appendChild(createButton("Start Game", handleStartGame));
+  };
 
-  startGame();
+  const renderGameScreen = () => {
+    app.innerHTML = "";
+    app.appendChild(renderGameBoard(board));
+  };
+
+  homeScreen();
 })();
