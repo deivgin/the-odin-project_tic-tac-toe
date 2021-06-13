@@ -18,19 +18,20 @@ const gameBoard = (() => {
 const Player = (name, mark) => ({ name, mark });
 
 const gameController = (() => {
-  let isGameStarted = false;
   const board = gameBoard.getBoard();
   const player1 = Player("player1", "X");
   const player2 = Player("player2", "O");
+
+  let isGameStarted = false;
   let currPlayer = player1;
-  let turn = 0;
 
   const getIsGameStarted = () => isGameStarted;
+
+  const getCurrPlayer = () => currPlayer;
 
   const gameStart = () => {
     gameBoard.init();
     isGameStarted = true;
-    turn++;
   };
 
   const checkWinCondition = (player) => {
@@ -63,8 +64,6 @@ const gameController = (() => {
     gameBoard.updateBoard(index, currPlayer.mark);
     const isGameWon = checkWinCondition(currPlayer);
     const isGameDraw = checkDrawCondition();
-    console.log("gameWon?", isGameWon);
-    console.log("gameDraw?", isGameDraw);
     if (isGameWon) {
       alert("gameWon");
       return;
@@ -75,11 +74,9 @@ const gameController = (() => {
     if (currPlayer === player1) currPlayer = player2;
     else if (currPlayer === player2) currPlayer = player1;
     console.log("currPlayer", currPlayer);
-    turn++;
-    console.log("turn", turn);
   };
 
-  return { gameStart, getIsGameStarted, onBoxClick };
+  return { gameStart, getIsGameStarted, onBoxClick, getCurrPlayer };
 })();
 
 const displayController = (() => {
@@ -137,6 +134,14 @@ const displayController = (() => {
     return container;
   };
 
+  const renderPlayer = () => {
+    const { name } = gameController.getCurrPlayer();
+    const heading = document.createElement("h2");
+    heading.innerText = `${name}'s turn`;
+    heading.classList.add("player-heading");
+    return heading;
+  };
+
   const homeScreen = () => {
     app.innerHTML = "";
     app.appendChild(createHeader("Tic-Tac-Toe"));
@@ -146,6 +151,7 @@ const displayController = (() => {
   const renderGameScreen = () => {
     app.innerHTML = "";
     app.appendChild(renderGameBoard(board));
+    app.appendChild(renderPlayer());
   };
 
   homeScreen();
