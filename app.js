@@ -23,9 +23,11 @@ const gameController = (() => {
   const player2 = Player("player2", "O");
 
   let isGameOver = false;
+  let isDraw = false;
   let currPlayer = player1;
 
   const getIsGameOver = () => isGameOver;
+  const getIsDraw = () => isDraw;
 
   const getCurrPlayer = () => currPlayer;
 
@@ -35,6 +37,7 @@ const gameController = (() => {
 
   const gameReset = () => {
     isGameOver = false;
+    isDraw = false;
     currPlayer = player1;
     gameBoard.clear();
   };
@@ -71,9 +74,10 @@ const gameController = (() => {
     const isGameDraw = checkDrawCondition();
 
     if (isGameWon) {
-      return (isGameOver = true);
+      isGameOver = true;
     } else if (isGameDraw) {
-      alert("Draw");
+      isGameOver = true;
+      isDraw = true;
     }
     if (currPlayer === player1) currPlayer = player2;
     else if (currPlayer === player2) currPlayer = player1;
@@ -85,6 +89,7 @@ const gameController = (() => {
     getCurrPlayer,
     getIsGameOver,
     gameReset,
+    getIsDraw,
   };
 })();
 
@@ -168,11 +173,16 @@ const displayController = (() => {
   };
 
   const renderGameOverScreen = ({ name }) => {
+    const isDraw = gameController.getIsDraw();
     app.innerHTML = "";
     const container = createContainer("game-over__container");
-    container.innerText = `${name} WON!`;
     const resetButton = createButton("Play again", handleReset);
     const homeButton = createButton("Quit", handleReturnHome);
+
+    if (isDraw) {
+      container.innerText = `DRAW!`;
+    } else container.innerText = `${name} WON!`;
+
     container.appendChild(resetButton);
     container.appendChild(homeButton);
     app.appendChild(container);
