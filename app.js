@@ -22,16 +22,21 @@ const gameController = (() => {
   const player1 = Player("player1", "X");
   const player2 = Player("player2", "O");
 
-  let isGameStarted = false;
+  let isGameOver = false;
   let currPlayer = player1;
 
-  const getIsGameStarted = () => isGameStarted;
+  const getIsGameOver = () => isGameOver;
 
   const getCurrPlayer = () => currPlayer;
 
   const gameStart = () => {
     gameBoard.init();
-    isGameStarted = true;
+  };
+
+  const gameReset = () => {
+    isGameOver = false;
+    currPlayer = player1;
+    gameBoard.clear();
   };
 
   const checkWinCondition = (player) => {
@@ -64,25 +69,30 @@ const gameController = (() => {
     gameBoard.updateBoard(index, currPlayer.mark);
     const isGameWon = checkWinCondition(currPlayer);
     const isGameDraw = checkDrawCondition();
+
     if (isGameWon) {
-      alert("gameWon");
-      return;
+      return (isGameOver = true);
     } else if (isGameDraw) {
-      alert("gameDraw");
-      return;
+      alert("Draw");
     }
     if (currPlayer === player1) currPlayer = player2;
     else if (currPlayer === player2) currPlayer = player1;
-    console.log("currPlayer", currPlayer);
   };
 
-  return { gameStart, getIsGameStarted, onBoxClick, getCurrPlayer };
+  return {
+    gameStart,
+    onBoxClick,
+    getCurrPlayer,
+    getIsGameOver,
+    gameReset,
+  };
 })();
 
 const displayController = (() => {
   const app = document.getElementById("app");
   const board = gameBoard.getBoard();
 
+  // handle functions
   const handleStartGame = () => {
     gameController.gameStart();
     renderGameScreen();
@@ -91,10 +101,24 @@ const displayController = (() => {
   const handleBoxClick = (e) => {
     if (e.target.innerText === "") {
       gameController.onBoxClick(e.target.id);
-      renderGameScreen();
+      !gameController.getIsGameOver()
+        ? renderGameScreen()
+        : renderGameOverScreen(gameController.getCurrPlayer());
     } else console.error("box is used");
   };
 
+  const handleReset = () => {
+    gameController.gameReset();
+    gameController.gameStart();
+    renderGameScreen();
+  };
+
+  const handleReturnHome = () => {
+    gameController.gameReset();
+    renderHomeScreen();
+  };
+
+  //element creation functions
   const createHeader = (name) => {
     const header = document.createElement("h1");
     header.classList.add("header");
@@ -121,6 +145,7 @@ const displayController = (() => {
     return container;
   };
 
+  // render functions
   const renderGameBoard = (board) => {
     const container = createContainer("game-board");
     board.map((item, index) => {
@@ -142,7 +167,18 @@ const displayController = (() => {
     return heading;
   };
 
-  const homeScreen = () => {
+  const renderGameOverScreen = ({ name }) => {
+    app.innerHTML = "";
+    const container = createContainer("game-over__container");
+    container.innerText = `${name} WON!`;
+    const resetButton = createButton("Play again", handleReset);
+    const homeButton = createButton("Quit", handleReturnHome);
+    container.appendChild(resetButton);
+    container.appendChild(homeButton);
+    app.appendChild(container);
+  };
+
+  const renderHomeScreen = () => {
     app.innerHTML = "";
     app.appendChild(createHeader("Tic-Tac-Toe"));
     app.appendChild(createButton("Start Game", handleStartGame));
@@ -154,5 +190,5 @@ const displayController = (() => {
     app.appendChild(renderPlayer());
   };
 
-  homeScreen();
+  renderHomeScreen();
 })();
