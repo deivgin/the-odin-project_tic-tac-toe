@@ -19,19 +19,32 @@ const Player = (name, mark) => ({ name, mark });
 
 const gameController = (() => {
   const board = gameBoard.getBoard();
-  const player1 = Player("player1", "X");
-  const player2 = Player("player2", "O");
-
+  let player1;
+  let player2;
+  let player1Name;
+  let player2Name;
   let isGameOver = false;
   let isDraw = false;
-  let currPlayer = player1;
+  let currPlayer;
 
   const getIsGameOver = () => isGameOver;
   const getIsDraw = () => isDraw;
 
   const getCurrPlayer = () => currPlayer;
 
+  const getPlayerValue = () => {
+    player1Name = document.querySelector("#p1").value;
+    player2Name = document.querySelector("#p2").value;
+  };
+
   const gameStart = () => {
+    console.log(player1Name);
+    if (!player1Name && !player2Name) {
+      getPlayerValue();
+    }
+    player1 = Player(player1Name, "X");
+    player2 = Player(player2Name, "O");
+    currPlayer = player1;
     gameBoard.init();
   };
 
@@ -124,11 +137,11 @@ const displayController = (() => {
   };
 
   //element creation functions
-  const createHeader = (name) => {
-    const header = document.createElement("h1");
-    header.classList.add("header");
-    name && (header.innerText = name);
-    return header;
+  const createHeading = (name) => {
+    const heading = document.createElement("h1");
+    heading.classList.add("heading");
+    name && (heading.innerText = name);
+    return heading;
   };
   const createButton = (name, handleClick) => {
     const button = document.createElement("button");
@@ -137,10 +150,12 @@ const displayController = (() => {
     handleClick && button.addEventListener("click", handleClick);
     return button;
   };
-  const createInput = (placeholder) => {
+  const createInput = (id, placeholder, value) => {
     const input = document.createElement("input");
-    input.classList.add(input);
+    input.id = id;
+    input.classList.add("input");
     placeholder && (input.placeholder = placeholder);
+    value && (input.value = value);
     return input;
   };
 
@@ -168,36 +183,52 @@ const displayController = (() => {
     const { name } = gameController.getCurrPlayer();
     const heading = document.createElement("h2");
     heading.innerText = `${name}'s turn`;
-    heading.classList.add("player-heading");
+    heading.classList.add("heading");
     return heading;
   };
 
   const renderGameOverScreen = ({ name }) => {
     const isDraw = gameController.getIsDraw();
     app.innerHTML = "";
-    const container = createContainer("game-over__container");
+    const container = createContainer();
+    const heading = createHeading();
+    container.appendChild(heading);
     const resetButton = createButton("Play again", handleReset);
     const homeButton = createButton("Quit", handleReturnHome);
 
     if (isDraw) {
-      container.innerText = `DRAW!`;
-    } else container.innerText = `${name} WON!`;
+      heading.innerText = `DRAW!`;
+    } else heading.innerText = `${name} WON!`;
 
     container.appendChild(resetButton);
     container.appendChild(homeButton);
     app.appendChild(container);
+    app.appendChild(renderFooter());
   };
 
   const renderHomeScreen = () => {
+    const inputContainer = createContainer("input-container");
     app.innerHTML = "";
-    app.appendChild(createHeader("Tic-Tac-Toe"));
+    inputContainer.appendChild(createInput("p1", "player name", "Player 1"));
+    inputContainer.appendChild(createInput("p2", "player name", "Player 2"));
+    app.appendChild(createHeading("Tic-Tac-Toe"));
+    app.appendChild(inputContainer);
     app.appendChild(createButton("Start Game", handleStartGame));
+    app.appendChild(renderFooter());
   };
 
   const renderGameScreen = () => {
     app.innerHTML = "";
-    app.appendChild(renderGameBoard(board));
     app.appendChild(renderPlayer());
+    app.appendChild(renderGameBoard(board));
+    app.appendChild(renderFooter());
+  };
+
+  const renderFooter = () => {
+    const footer = document.createElement("footer");
+    footer.classList.add("footer");
+    footer.innerText = "Created by Deividas Gineitis, 2021";
+    return footer;
   };
 
   renderHomeScreen();

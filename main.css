@@ -1,11 +1,3 @@
-:root {
-  --primary: #00c9c6;
-  --dark: #403b3b;
-  --light: #706a6a;
-  --white: #fff;
-  --black: #0a0903;
-}
-
 * {
   margin: 0;
   padding: 0;
@@ -17,24 +9,72 @@ body {
   font-family: "Staatliches", cursive;
 }
 
+.app {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
 .heading {
-  font-size: 4rem;
+  font-size: 5rem;
+  text-shadow: 0.25rem 0.25rem 0 rgb(0, 0, 0, 0.6);
 }
 
 .game-board {
-  width: 30rem;
-  height: 30rem;
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   grid-template-rows: repeat(3, 1fr);
+  grid-gap: 0.5rem;
+  background-color: #000;
+}
+
+.button {
+  background-color: inherit;
+  border: 0.3rem solid #000;
+  border-radius: 0.5rem;
+  font-size: 3rem;
+  padding: 0.5rem;
+  box-shadow: 0.5rem 0.5rem 0 rgb(0, 0, 0, 0.6);
+  margin: 0.5rem;
+  transition: all ease 0.2s;
+}
+
+.button:hover {
+  cursor: pointer;
+  transform: translateY(-0.5rem);
 }
 
 .box {
   width: 10rem;
   height: 10rem;
-  background-color: red;
-  margin: 1rem;
+  background-color: #fff;
+  transition: ease all 0.2s;
+  font-size: 9rem;
+  text-align: center;
 }
 
-.player-heading {
+.box:hover {
+  cursor: pointer;
+  background-color: #999;
+}
+
+.footer {
+  margin-top: 1rem;
+}
+
+.input {
+  font-size: 2rem;
+  border: 0.25rem solid #000;
+  border-radius: 0.5rem;
+  padding: 0.5rem;
+  margin: 1rem;
+  box-shadow: 0.5rem 0.5rem 0 rgb(0, 0, 0, 0.6);
+  transition: all ease 0.2s;
+}
+
+.input:focus {
+  outline: none;
+  transform: translateY(-0.5rem);
 }
