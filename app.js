@@ -96,6 +96,11 @@ const gameController = (() => {
     else if (currPlayer === player2) currPlayer = player1;
   };
 
+  const resetPlayerNames = () => {
+    player1Name = null;
+    player2Name = null;
+  };
+
   return {
     gameStart,
     onBoxClick,
@@ -103,6 +108,7 @@ const gameController = (() => {
     getIsGameOver,
     gameReset,
     getIsDraw,
+    resetPlayerNames,
   };
 })();
 
@@ -133,6 +139,7 @@ const displayController = (() => {
 
   const handleReturnHome = () => {
     gameController.gameReset();
+    gameController.resetPlayerNames();
     renderHomeScreen();
   };
 
